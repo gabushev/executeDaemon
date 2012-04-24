@@ -17,7 +17,6 @@ public class ExecuteDaemon {
      */
     public static void main(String[] args) {
         // TODO add application logic for start daemon for all classes or some
-        ProjectConfig pConf = new ProjectConfig();
-        
+        ExecController execControl = new ExecController();
     }
 }

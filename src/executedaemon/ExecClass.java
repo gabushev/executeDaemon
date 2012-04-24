@@ -4,7 +4,12 @@
  */
 package executedaemon;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -17,7 +22,12 @@ public class ExecClass extends Thread{
     private Integer delay = null;
     private Boolean log = false;
     private Boolean interrupt = false;
+    private String cmd = null;
     
+    public Boolean blinker = false;//flag for interrupt
+    public Date startTime = null;
+    public Date endTime = null;
+    public String processName = null;
     
     
     public ExecClass(String file, String interpreter, Integer delay, Boolean log, Boolean interrupt) {
@@ -36,12 +46,29 @@ public class ExecClass extends Thread{
         }
         this.setLog(log);
         this.setInterrupt(interrupt);
+        String[] name = file.split("\\/");
+        this.processName = name[name.length-1];
+        this.setName(processName);
     }
 
     @Override
     public void run() {
-        
-        super.run();
+        this.cmd = this.getInterpreter() +" "+ this.getFilePath();
+        while (this.blinker){
+            try {
+                try {
+                    Process pExec = Runtime.getRuntime().exec(this.cmd);
+                    pExec.waitFor();
+                } catch (RuntimeException | IOException ex){
+                    ExecLogger log = new ExecLogger(this.processName);
+                    log.addRecord(ex.getMessage());
+                    ex.printStackTrace();
+                }
+                wait(this.delay);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(ExecClass.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
 
     /**

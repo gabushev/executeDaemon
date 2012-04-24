@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+
+
+<root>
+    php file="../../file.php" interpreter="/usr/share/php" delay="10" interrupt="false" logging="true" />
+</root>

@@ -9,7 +9,5 @@ package executedaemon;
  * @author darthvader
  */
 public interface ExecLoggerInterface {
-    boolean initLogger();
-    void addRecord();
-    
+    void addRecord(String message);
 }
