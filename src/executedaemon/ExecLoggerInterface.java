@@ -8,6 +8,6 @@ package executedaemon;
  *
  * @author darthvader
  */
-public interface ExecLoggerInterface {
+public interface ExecLoggerInterface{
     void addRecord(String message);
 }

@@ -29,11 +29,12 @@ public class ExecController{
     
     public void startThread(int i){
         this.threadSet[i].run();
+        System.out.println("\tThread "+this.threadSet[i].getName()+ " started.");
     }
     
     public void startThread(Integer i){
-        System.out.println(i);
-        this.threadSet[i].run();
+        this.threadSet[i].start();
+        System.out.println("\tThread "+this.threadSet[i].getName()+ " started.");
     }
     
     public void stopThread(int i){
@@ -42,9 +43,7 @@ public class ExecController{
     
     public ExecController() {
         ProjectConfig pConf = new ProjectConfig();
-        ExecClass[] tmpClasses = pConf.getConfig();
-        System.out.println(tmpClasses.length);
-        this.setThreadSet(tmpClasses);
+        this.setThreadSet(pConf.getConfig());
         Integer len = this.getSize();
         for (Integer i=0; i<len; i++){
             this.startThread(i);

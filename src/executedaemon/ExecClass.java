@@ -22,15 +22,20 @@ public class ExecClass extends Thread{
     private Integer delay = null;
     private Boolean log = false;
     private Boolean interrupt = false;
-    private String cmd = null;
+    private Integer interruptTime = null;
     
-    public Boolean blinker = false;//flag for interrupt
+    private String cmd = null;
+    private Thread processing = null;
+    private Process pExec = null;
+    private ExecTimer timer = null;
+    
+    public Boolean blinker = true;//flag for interrupt
     public Date startTime = null;
     public Date endTime = null;
     public String processName = null;
     
     
-    public ExecClass(String file, String interpreter, Integer delay, Boolean log, Boolean interrupt) {
+    public ExecClass(String file, String interpreter, Integer delay, Boolean log, Boolean interrupt, Integer interruptTime) {
         File tmpFile = new File(file);
         if (tmpFile.exists()){
             this.setFilePath(file);
@@ -46,31 +51,54 @@ public class ExecClass extends Thread{
         }
         this.setLog(log);
         this.setInterrupt(interrupt);
+        this.interruptTime = interruptTime;
         String[] name = file.split("\\/");
         this.processName = name[name.length-1];
         this.setName(processName);
     }
 
     @Override
-    public void run() {
+    public void run(){
         this.cmd = this.getInterpreter() +" "+ this.getFilePath();
         while (this.blinker){
             try {
                 try {
-                    Process pExec = Runtime.getRuntime().exec(this.cmd);
-                    pExec.waitFor();
-                } catch (RuntimeException | IOException ex){
+                    this.timer = new ExecTimer(this.interruptTime, this);
+                    this.timer.run();
+                    this.pExec = Runtime.getRuntime().exec(this.cmd);
+                    this.pExec.waitFor();
+                    //timer.timeouted = false if at this time the process execution time more that its available
+                    timer.setFalseTimeout();
+                    timer = null;
+                        //Debug
+                        //System.out.println("Thread: "+this.getName()+" \t Done!"+this.pExec.exitValue());
+                    if (this.pExec.exitValue()!=0){
+                        ExecLogger log = new ExecLogger(this.processName);
+                        log.initLogger();
+                        log.addRecord(this.pExec.getErrorStream().toString());
+                        log = null;
+                    }
+                    sleep(this.delay);
+                } catch (IOException ex) {
+                    Logger.getLogger(ExecClass.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (NullPointerException ex){
+                    //System.out.println("code: "+ ex.getMessage() + this.pExec.exitValue());
                     ExecLogger log = new ExecLogger(this.processName);
+                    log.initLogger();
                     log.addRecord(ex.getMessage());
+                    log = null;
                     ex.printStackTrace();
                 }
-                wait(this.delay);
             } catch (InterruptedException ex) {
                 Logger.getLogger(ExecClass.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
 
+    public void stopExec(){
+        this.pExec.destroy();
+    }
+    
     /**
      * @return the filePath
      */

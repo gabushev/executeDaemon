@@ -13,10 +13,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
 /**
@@ -29,6 +26,12 @@ public class ProjectConfig {
     }
     
     public ExecClass[] getConfig(){
+        String attributeFile = null;
+        String attributeInterpreter = null;
+        String attributeDelay = null;
+        String attributeInterrupt = null;
+        String attributeLogging = null;
+        String interruptTime = null;
         ExecClass[] result = null;
         DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = null;
@@ -39,22 +42,29 @@ public class ProjectConfig {
         }
         try {
             String tmpDir = (new File("").getAbsolutePath());
+            System.out.println(tmpDir+"/cfg/edConfig.xml");
             File file = new File(tmpDir+"/cfg/edConfig.xml");
             Document document = builder.parse(
                 new FileInputStream(file));
-                NodeList nodes = document.getElementsByTagName("php").item(0).getChildNodes();
+                NodeList nodes = document.getElementsByTagName("php");
                 result = new ExecClass[document.getElementsByTagName("php").getLength()];
-                for(int i=0; i<nodes.getLength(); i++){
-                    System.out.println(nodes.getLength());
-                Node node = nodes.item(i);
+                for(int i=0; i<document.getElementsByTagName("php").getLength(); i++){
+                    //System.out.println(nodes.getLength());
+                Element node = (Element) nodes.item(i);
                     if(node instanceof Element){
+                        interruptTime = "0";
                         Element child = (Element) node;
-                        String attributeFile = child.getAttribute("file");
-                        String attributeInterpreter = child.getAttribute("interpreter");
-                        String attributeDelay = child.getAttribute("delay");
-                        String attributeInterrupt = child.getAttribute("interrupt");
-                        String attributeLogging = child.getAttribute("logging");
-                        result[i] = new ExecClass(attributeFile, attributeInterpreter, Integer.parseInt(attributeDelay), Boolean.parseBoolean(attributeLogging), Boolean.parseBoolean(attributeInterrupt));
+                        attributeFile = child.getAttribute("file");
+                        attributeInterpreter = child.getAttribute("interpreter");
+                        attributeDelay = child.getAttribute("delay");
+                        attributeInterrupt = child.getAttribute("interrupt");
+                        attributeLogging = child.getAttribute("logging");
+                        try{
+                            interruptTime = Integer.toString(Integer.parseInt(interruptTime)+Integer.parseInt(child.getAttribute("interruptTime")));
+                        } catch (NumberFormatException ex){
+                            interruptTime = "0";
+                        }
+                        result[i] = new ExecClass(attributeFile, attributeInterpreter, Integer.parseInt(attributeDelay), Boolean.parseBoolean(attributeLogging), Boolean.parseBoolean(attributeInterrupt),Integer.parseInt(interruptTime));
                     }
                 }
                 
@@ -62,9 +72,10 @@ public class ProjectConfig {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-        } catch (Exception ex){
+        } catch (DOMException ex){
             ex.printStackTrace();
         }
+        
         return result;
     }
     

@@ -27,25 +27,24 @@ public class ExecLogger implements ExecLoggerInterface{
     }
     
     public void initLogger() {
-        this.descr = "/var/log/executeDaemon/"+this.processName+this.dateCall.toString();
-        this.initLogger();
+        this.descr = "/var/log/executeDaemon/"+this.processName+"-"+this.dateCall.toString();
     }
 
     @Override
     public void addRecord(String message) {
-        try {
+            //System.out.println(this.descr);
             this.write(this.descr, message);
-        } catch (IOException ex) {
-            Logger.getLogger(ExecLogger.class.getName()).log(Level.SEVERE, null, ex);
-        }
     }
 
-    public boolean write(String filename, String text) throws IOException{
+    public boolean write(String filename, String text){
+        String inText = "";
+        inText = inText+text;
         try {
             BufferedWriter out = new BufferedWriter(new FileWriter(filename));
-            out.write(text);
+            out.write(inText);
             out.close();
         } catch (IOException e) {
+            Logger.getLogger(ExecLogger.class.getName()).log(Level.SEVERE, null, e);
             return false;
         }
         return true;
