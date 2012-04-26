@@ -8,7 +8,7 @@ package executedaemon;
  *
  * @author darthvader
  */
-public class ExecController{
+public class ExecController extends Thread{
     private ExecClass[] threadSet = null;
     
     public Integer getSize(){
@@ -42,11 +42,16 @@ public class ExecController{
     }
     
     public ExecController() {
+        this.setName("executeDaemon");
+        System.out.println("Starting executor..");
         ProjectConfig pConf = new ProjectConfig();
         this.setThreadSet(pConf.getConfig());
         Integer len = this.getSize();
         for (Integer i=0; i<len; i++){
             this.startThread(i);
         }
+        System.out.println("Done. The daemon mode on.");
+        this.run();
+        this.setDaemon(true);
     }
 }

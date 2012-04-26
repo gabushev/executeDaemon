@@ -51,7 +51,7 @@ public class ExecTimer extends Thread{
                 sleep(timeOut);
                 //if flag is true yet then kill process
                 if (this.timeouted==true){
-                    System.out.println("Sooooooo slow, "+this.parent.getName()+"!");
+                    System.out.println("Process "+this.parent.getName()+" killed by execution timeout.\n");
                     this.parent.stopExec();
                 }
             } catch (InterruptedException ex){

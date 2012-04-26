@@ -4,6 +4,6 @@ interruptTime
 -->
 <scripts>
     <php file="/var/www/testscript.php" interpreter="/usr/bin/php-java" delay="100" interrupt="false" logging="true" />
-    <php file="/var/www/testscr1.php" interpreter="/usr/bin/php" delay="30" interrupt="true" logging="true" interruptTime="10" />
+    <php file="/var/www/testscr1.php" interpreter="/usr/bin/php" delay="300" interrupt="true" logging="true" interruptTime="100000" />
     <php file="/var/www/testfailscr.php" interpreter="/usr/bin/php-java" delay="10000" interrupt="false" logging="true" />
 </scripts>

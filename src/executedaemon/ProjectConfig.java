@@ -42,7 +42,7 @@ public class ProjectConfig {
         }
         try {
             String tmpDir = (new File("").getAbsolutePath());
-            System.out.println(tmpDir+"/cfg/edConfig.xml");
+            System.out.println("Using config file "+tmpDir+"/cfg/edConfig.xml");
             File file = new File(tmpDir+"/cfg/edConfig.xml");
             Document document = builder.parse(
                 new FileInputStream(file));
